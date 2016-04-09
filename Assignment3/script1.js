@@ -45,40 +45,39 @@ $.getJSON(url, function(json) {
 });
 
 $('#slider-timestamp').html(options.markers[ui.value].feature.properties.date);
-/*
+
+
 .done(function (data) {
-      dataLayer = L.geoJson(data, {
-        //must include this so points aren't just standard Leaflet markers
-        pointToLayer: function (feature,latlng) {
-          return L.circleMarker(latlng);
-        },
+    dataLayer = L.geoJson(data, {
+      //must include this so points aren't just standard Leaflet markers
+      pointToLayer: function (feature,latlng) {
+        return L.circleMarker(latlng);
+      },
 
-        //styling generic
-        style: function (feature) {
-          var style = {
-            fillColor: '#1a9641',
-            fillOpacity: 0.2,
-            radius: 5,
-            stroke: false
-          };
-          //conditional to size and color points
-          if (feature.properties.entero_top > 105) {
-            style.fillColor = '#fdae61',
-            style.radius = 10;
-          }
-          if (feature.properties.entero_top > 640) {
-            style.fillColor = '#d7191c',
-            style.radius = 15;
-          }
-          return style;
+      //styling generic
+      style: function (feature) {
+        var style = {
+          fillColor: '#1a9641',
+          fillOpacity: 0.2,
+          radius: 5,
+          stroke: false
+        };
+        //conditional to size and color points
+        if (feature.properties.entero_top > 105) {
+          style.fillColor = '#fdae61',
+          style.radius = 10;
         }
+        if (feature.properties.entero_top > 640) {
+          style.fillColor = '#d7191c',
+          style.radius = 15;
+        }
+        return style;
+      }
+    }).addTo(map);   
+});
 
 
-
-
-      }).addTo(map);   
-    });
-
+/*
 //Drop down - I don't want to use this right now, but may use it later..
 $('.limit').change(function () {
   var url = 'https://korin.cartodb.com/api/v2/sql?' + $.param({
