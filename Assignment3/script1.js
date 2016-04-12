@@ -2,6 +2,8 @@
 
 $(document).ready(function () {
   // NYC-centered map
+  //var sliderControl = null;
+
   var map = L.map('map').setView([40.731649,-73.977814], 10);
   var dataLayer;
   
@@ -12,85 +14,62 @@ $(document).ready(function () {
   }).addTo(map);
  
 
-//mapzen geocoder
-L.control.geocoder('search-xBMCfMW', {
-  position: 'topright'
-}).addTo(map);
+  //mapzen geocoder
+  L.control.geocoder('search-xBMCfMW', {
+    position: 'topright'
+  }).addTo(map);
 
 
+  var url = 'https://korin.cartodb.com/api/v2/sql?' + $.param({
+      q: 'SELECT * FROM table_2015_dep_harbor_survey',
+    format: 'GeoJSON'
+  });
+  $.getJSON(url) 
 
+  .done(function (data) {
+      //time slider
+      var testlayer = L.geoJson(data, {
+      //Create a marker layer (in the example done via a GeoJSON FeatureCollection)
+        pointToLayer: function (feature,latlng) {
+          return L.circleMarker(latlng);
+        },
+        //styling generic
+        style: function (feature) {
+          var style = {
+            fillColor: '#1a9641',
+            fillOpacity: 1,
+            radius: 5,
+            stroke: true,
+            color: 'white',
+            weight: 1
+          };
+          //conditional to color points based on enterococcus counts
+          if (feature.properties.entero_top > 105) {
+            style.fillColor = '#fdae61';
+          }
+          if (feature.properties.entero_top > 640) {
+            style.fillColor = '#d7191c';
+          }
+          return style;
+        },
+      }),
 
-var url = 'https://korin.cartodb.com/api/v2/sql?' + $.param({
-    q: 'SELECT * FROM table_2015_dep_harbor_survey',
-  format: 'GeoJSON'
-});
-$.getJSON(url, function(json) {
-//time slider
-  var testlayer = L.geoJson(json),
       sliderControl = L.control.sliderControl({
         position: "topright",
         layer: testlayer
       });
-  
-  //for a range-slider
-    sliderControl = L.control.sliderControl({
-      position: "topright",
-      layer: testlayer,
-      range: true
-    });
 
-  map.addControl(sliderControl);
+      
+        //Make sure to add the slider to the map ;-)
+        map.addControl(sliderControl);
 
-  sliderControl.startSlider(); 
-});
+        //And initialize the slider
+        sliderControl.startSlider();
 
-$('#slider-timestamp').html(options.markers[ui.value].feature.properties.date);
-
-
-.done(function (data) {
-    dataLayer = L.geoJson(data, {
-      //must include this so points aren't just standard Leaflet markers
-      pointToLayer: function (feature,latlng) {
-        return L.circleMarker(latlng);
-      },
-
-      //styling generic
-      style: function (feature) {
-        var style = {
-          fillColor: '#1a9641',
-          fillOpacity: 0.2,
-          radius: 5,
-          stroke: false
-        };
-        //conditional to size and color points
-        if (feature.properties.entero_top > 105) {
-          style.fillColor = '#fdae61',
-          style.radius = 10;
-        }
-        if (feature.properties.entero_top > 640) {
-          style.fillColor = '#d7191c',
-          style.radius = 15;
-        }
-        return style;
-      }
-    }).addTo(map);   
-});
-
-
-/*
-//Drop down - I don't want to use this right now, but may use it later..
-$('.limit').change(function () {
-  var url = 'https://korin.cartodb.com/api/v2/sql?' + $.param({
-    q: 'SELECT * FROM table_2015_dep_harbor_survey ORDER BY entero_top DESC LIMIT ' + $(this).val(),
-    format: 'GeoJSON'
-  });
-  $.getJSON(url)
-  
-        .done(function (data) {
-        dataLayer.clearLayers();
-        dataLayer.addData(data);
       });
+
   });
 
-*/
-});
+
+
+
