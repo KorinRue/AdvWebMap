@@ -1,8 +1,8 @@
 // Leaflet template
 
 $(document).ready(function () {
-  // map centered on Brooklyn
-  var map = L.map('map').setView([40.651685,-73.960316], 12);
+  // map centered on NYC
+  var map = L.map('map').setView([40.731649,-73.977814], 10);
  
 
   // baselayer
@@ -11,7 +11,7 @@ $(document).ready(function () {
   maxZoom: 18
   }).addTo(map);
 
- $.getJSON('https://korin.cartodb.com/api/v2/sql?q=SELECT ST_Transform(ST_ConvexHull(ST_Collect(the_geom_webmercator)), 4326) AS the_geom FROM brooklyn_tree_census GROUP BY diameter&format=GeoJSON')
+ $.getJSON('https://korin.cartodb.com/api/v2/sql?q=SELECT ST_Transform(ST_Buffer(the_geom_webmercator, 1000), 4326) AS the_geom FROM table_2015_dep_harbor_survey&format=GeoJSON')
   
     // stlye convex hull
     .done(function (data) {
@@ -19,8 +19,9 @@ $(document).ready(function () {
       L.geoJson(data, {
 
     	style: {
-    	  color: '#136400',
-          fillOpacity: 0.0,
+    	  fillColor: '#136400',
+        color: '#136400',
+          fillOpacity: 0.5,
           opacity: 1,
           weight: 1
         },
